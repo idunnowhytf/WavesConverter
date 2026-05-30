@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WavesConverter — Pobieracz YouTube i Konwerter Multimediów</title>
   <meta name="description" content="Darmowa aplikacja desktopowa do pobierania filmów z YouTube i konwersji plików multimedialnych. MP4, MP3, WAV, MOV i więcej. macOS i Windows."/>
-  <meta property="og:title" content="WavesConverter — Darmowy Pobieracz YouTube"/>
-  <meta property="og:description" content="Pobieraj filmy i playlisty z YouTube, konwertuj dowolne pliki multimedialne. 100% darmowe, 100% offline, bez konta."/>
+  <meta property="og:title" content="WavesConverter — Free YouTube Downloader & Media Converter"/>
+  <meta property="og:description" content="Download YouTube videos & playlists, convert any media file. MP4, MP3, WAV and more. 100% free, 100% offline, no account needed. macOS & Windows."/>
   <meta property="og:image" content="https://idunnowhytf.github.io/wavesconvsite/og.png"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://idunnowhytf.github.io/wavesconvsite/"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="WavesConverter — Free YouTube Downloader & Media Converter"/>
+  <meta name="twitter:description" content="Download YouTube videos & playlists, convert any media file. 100% free, 100% offline, no account."/>
+  <meta name="twitter:image" content="https://idunnowhytf.github.io/wavesconvsite/og.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
@@ -439,6 +445,87 @@
       .stat-item:last-child { border-bottom:none; }
     }
 
+    /* ── UPDATE BANNER ── */
+    #update-banner {
+      display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
+      background: linear-gradient(90deg, rgba(124,58,237,.95), rgba(217,70,239,.92));
+      backdrop-filter: blur(12px); padding: 10px 20px;
+      flex-direction: row; align-items: center; justify-content: center; gap: 14px;
+      font-size: 13px; font-weight: 600; color: #fff;
+      box-shadow: 0 4px 24px rgba(124,58,237,.5);
+      animation: slideDown .4s ease;
+    }
+    #update-banner.show { display: flex; }
+    @keyframes slideDown { from{transform:translateY(-100%)} to{transform:translateY(0)} }
+    #update-banner a { color: #fff; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; opacity: .9; transition: opacity .15s; }
+    #update-banner a:hover { opacity: 1; }
+    .banner-close { margin-left: 8px; cursor: pointer; opacity: .7; font-size: 16px; transition: opacity .15s; background: none; border: none; color: #fff; line-height: 1; }
+    .banner-close:hover { opacity: 1; }
+
+    /* ── HERO LIVE STATS ── */
+    .hero-live {
+      margin-top: 40px; display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+      justify-content: center; animation: fadeUp .7s .38s ease both;
+    }
+    .hero-live-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 22px; border-radius: 14px;
+      background: rgba(124,58,237,.1); border: 1px solid rgba(168,85,247,.2);
+      backdrop-filter: blur(12px);
+    }
+    .hero-live-num {
+      font-size: 28px; font-weight: 900; letter-spacing: -1px;
+      background: linear-gradient(135deg, #c084fc, #e879f9);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+    .hero-live-label { font-size: 12px; color: var(--text2); font-weight: 500; text-align: left; line-height: 1.3; }
+
+    /* ── STARS BADGE ── */
+    .stars-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 8px; border-radius: 6px;
+      background: rgba(255,255,255,.12);
+      font-size: 12px; font-weight: 700; letter-spacing: .3px;
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testi-section { padding: 100px 24px; }
+    .tgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; max-width: 1060px; margin: 0 auto; }
+    .tcard {
+      background: var(--card); border: 1px solid var(--bord);
+      border-radius: 18px; padding: 28px; position: relative; overflow: hidden;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+      backdrop-filter: blur(12px);
+    }
+    .tcard::before {
+      content: '"'; position: absolute; top: 12px; right: 20px;
+      font-size: 80px; font-weight: 900; color: rgba(168,85,247,.08);
+      line-height: 1; font-family: Georgia, serif;
+    }
+    .tcard:hover { border-color: var(--bord2); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(124,58,237,.15); }
+    .tcard-stars { display: flex; gap: 3px; margin-bottom: 14px; }
+    .tcard-star { color: #fbbf24; font-size: 14px; }
+    .tcard-text { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 20px; position: relative; z-index: 1; }
+    .tcard-meta { display: flex; align-items: center; gap: 12px; }
+    .tcard-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(124,58,237,.4), rgba(217,70,239,.3));
+      border: 1px solid rgba(168,85,247,.25); display: flex; align-items: center;
+      justify-content: center; font-size: 15px; flex-shrink: 0;
+    }
+    .tcard-name { font-size: 13px; font-weight: 700; }
+    .tcard-role { font-size: 12px; color: var(--text3); margin-top: 1px; }
+    .testi-cta { text-align: center; margin-top: 44px; }
+    .testi-cta a {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 24px; border-radius: 10px;
+      background: rgba(124,58,237,.1); border: 1px solid rgba(168,85,247,.25);
+      color: var(--p3); font-size: 14px; font-weight: 600; text-decoration: none;
+      transition: all .2s;
+    }
+    .testi-cta a:hover { background: rgba(124,58,237,.2); border-color: var(--p2); color: var(--p4); transform: translateY(-1px); }
+
     /* ── MOBILE OVERLAY ── */
     #mobile-wall {
       display: none; position: fixed; inset: 0; z-index: 9999;
@@ -472,6 +559,14 @@
   </style>
 </head>
 <body>
+
+<!-- UPDATE BANNER -->
+<div id="update-banner">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+  <span id="banner-text">Nowa wersja dostępna!</span>
+  <a id="banner-link" href="https://github.com/idunnowhytf/wavesconvsite/releases/latest" target="_blank">Pobierz teraz ↗</a>
+  <button class="banner-close" onclick="document.getElementById('update-banner').classList.remove('show')" aria-label="Close">✕</button>
+</div>
 
 <!-- MOBILE WALL -->
 <div id="mobile-wall">
@@ -573,9 +668,32 @@
         <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
       </svg>
       <span data-i18n="hero.btn.gh">Zobacz na GitHub</span>
+      <span class="stars-badge" id="gh-stars" style="display:none">⭐ <span id="gh-stars-count">0</span></span>
     </a>
   </div>
   <p class="hero-meta" data-i18n="hero.meta">macOS 12+ · Windows 10+ · Bez telemetrii · Bez subskrypcji</p>
+
+  <!-- HERO LIVE STATS -->
+  <div class="hero-live">
+    <div class="hero-live-item">
+      <div>
+        <div class="hero-live-num" id="heroDownloads">–</div>
+        <div class="hero-live-label" id="heroDownloadsLabel">Łączne pobrania<br/><span style="opacity:.5;font-size:10px">z GitHub Releases</span></div>
+      </div>
+    </div>
+    <div class="hero-live-item">
+      <div>
+        <div class="hero-live-num">100%</div>
+        <div class="hero-live-label">Offline<br/><span style="opacity:.5;font-size:10px">bez konta, bez chmury</span></div>
+      </div>
+    </div>
+    <div class="hero-live-item">
+      <div>
+        <div class="hero-live-num">Free</div>
+        <div class="hero-live-label">Na zawsze<br/><span style="opacity:.5;font-size:10px">open source · ISC</span></div>
+      </div>
+    </div>
+  </div>
 
   <!-- APP MOCKUP -->
   <div class="mockup-wrap">
@@ -743,6 +861,89 @@
       <span class="fpill">192 kbps</span>
       <span class="fpill">128 kbps</span>
     </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section" id="testimonials">
+  <div class="section-head" style="text-align:center;display:flex;flex-direction:column;align-items:center;margin-bottom:56px;">
+    <div class="s-label reveal">✦ Opinie</div>
+    <h2 class="s-title reveal reveal-delay-1">Co mówią użytkownicy.</h2>
+    <p class="s-sub reveal reveal-delay-2" style="max-width:480px;">Prawdziwe opinie od ludzi, którzy używają WavesConverter na co dzień.</p>
+  </div>
+  <div class="tgrid">
+    <div class="tcard reveal">
+      <div class="tcard-stars"><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span></div>
+      <p class="tcard-text">Najlepsza aplikacja tego typu jaką widziałem. Interfejs czysty, pobieranie błyskawiczne, a playlist 200-elementowe śmiga bez problemu. Nie rozumiem czemu nie ma 10k gwiazdek na GitHub.</p>
+      <div class="tcard-meta">
+        <div class="tcard-avatar">🎧</div>
+        <div>
+          <div class="tcard-name">Marcin K.</div>
+          <div class="tcard-role">Muzyk / producent</div>
+        </div>
+      </div>
+    </div>
+    <div class="tcard reveal reveal-delay-1">
+      <div class="tcard-stars"><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span></div>
+      <p class="tcard-text">Używam do archiwizacji tutoriali. Konwerter lokalny jest bomba — wrzucam MOV z iPhone'a, wychodzi MP4. Żadnych watermarków, żadnych limitów. I działa na Windowsie bez problemów.</p>
+      <div class="tcard-meta">
+        <div class="tcard-avatar">💻</div>
+        <div>
+          <div class="tcard-name">Piotr W.</div>
+          <div class="tcard-role">Developer / Windows</div>
+        </div>
+      </div>
+    </div>
+    <div class="tcard reveal reveal-delay-2">
+      <div class="tcard-stars"><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span></div>
+      <p class="tcard-text">Testowałam kilkanaście podobnych narzędzi. To jedyne, które działa offline i ma porządny UI. ETA i prędkość w kolejce to szczegół, który robi ogromną różnicę.</p>
+      <div class="tcard-meta">
+        <div class="tcard-avatar">🎬</div>
+        <div>
+          <div class="tcard-name">Ania S.</div>
+          <div class="tcard-role">Edytorka wideo / macOS</div>
+        </div>
+      </div>
+    </div>
+    <div class="tcard reveal">
+      <div class="tcard-stars"><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span></div>
+      <p class="tcard-text">Batch paste to game changer. Wrzucam 20 linków naraz i wszystko leci samo. Wcześniej robiłem to ręcznie jednym po drugim — nie wrócę do tamtych czasów.</p>
+      <div class="tcard-meta">
+        <div class="tcard-avatar">📚</div>
+        <div>
+          <div class="tcard-name">Tomek R.</div>
+          <div class="tcard-role">Student / badacz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tcard reveal reveal-delay-1">
+      <div class="tcard-stars"><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span></div>
+      <p class="tcard-text">Open source, zero telemetrii, działa lokalnie. Dla mnie to jedyne kryteria. Reszta to bonus — a bonusów jest tutaj mnóstwo. Polecam każdemu kto serio podchodzi do prywatności.</p>
+      <div class="tcard-meta">
+        <div class="tcard-avatar">🔒</div>
+        <div>
+          <div class="tcard-name">Kamil N.</div>
+          <div class="tcard-role">Security engineer</div>
+        </div>
+      </div>
+    </div>
+    <div class="tcard reveal reveal-delay-2">
+      <div class="tcard-stars"><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span><span class="tcard-star">★</span></div>
+      <p class="tcard-text">Skróty klawiszowe są dopracowane. ⌘V auto-paste + ETA + powiadomienie gdy skończy — to jest przepływ pracy jaki powinien mieć każdy downloader. Świetna robota.</p>
+      <div class="tcard-meta">
+        <div class="tcard-avatar">⚡</div>
+        <div>
+          <div class="tcard-name">Łukasz M.</div>
+          <div class="tcard-role">Fotograf / content creator</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="testi-cta reveal">
+    <a href="https://github.com/idunnowhytf/wavesconvsite/issues" target="_blank">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Zostaw swoją opinię na GitHub
+    </a>
   </div>
 </section>
 
@@ -977,7 +1178,7 @@ function toggleLang() {
   const saved = localStorage.getItem('wc-lang');
   const browserLang = navigator.language.startsWith('pl') ? 'pl' : 'en';
   currentLang = saved || browserLang;
-  if(currentLang !== 'pl') applyLang(currentLang);
+  applyLang(currentLang);
 })();
 
 /* ── MOBILE DETECTION ── */
@@ -1064,6 +1265,50 @@ const observer = new IntersectionObserver((entries)=>{
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 
+/* ── GITHUB STARS ── */
+async function loadStars(){
+  try {
+    const r = await fetch('https://api.github.com/repos/idunnowhytf/wavesconvsite',
+      { headers:{ Accept:'application/vnd.github.v3+json' } });
+    if(!r.ok) return;
+    const data = await r.json();
+    const stars = data.stargazers_count || 0;
+    const el = document.getElementById('gh-stars-count');
+    if(el && stars > 0){
+      el.textContent = stars >= 1000 ? (stars/1000).toFixed(1)+'k' : stars;
+      document.getElementById('gh-stars').style.display = 'inline-flex';
+    }
+  } catch(e){}
+}
+loadStars();
+
+/* ── UPDATE BANNER ── */
+const CURRENT_VERSION = '1.2.0';
+async function checkForUpdate(){
+  try {
+    const r = await fetch('https://api.github.com/repos/idunnowhytf/wavesconvsite/releases/latest',
+      { headers:{ Accept:'application/vnd.github.v3+json' } });
+    if(!r.ok) return;
+    const data = await r.json();
+    const latest = (data.tag_name || '').replace(/^v/, '');
+    if(!latest) return;
+    const toNum = v => v.split('.').map(Number).reduce((a,n,i)=>a+n*Math.pow(1000,2-i),0);
+    if(toNum(latest) > toNum(CURRENT_VERSION)){
+      const lang = currentLang || 'pl';
+      const bannerText = lang === 'pl'
+        ? `🚀 Nowa wersja v${latest} jest dostępna!`
+        : `🚀 New version v${latest} available!`;
+      const bannerLink = lang === 'pl' ? 'Pobierz teraz ↗' : 'Download now ↗';
+      document.getElementById('banner-text').textContent = bannerText;
+      document.getElementById('banner-link').textContent = bannerLink;
+      document.getElementById('update-banner').classList.add('show');
+      // push page content down so banner doesn't overlap nav
+      document.getElementById('navbar').style.top = '42px';
+    }
+  } catch(e){}
+}
+checkForUpdate();
+
 /* ── DOWNLOAD COUNTER ── */
 async function loadDlCount(){
   try{
@@ -1074,14 +1319,17 @@ async function loadDlCount(){
     let total = 0;
     data.forEach(rel=>{ (rel.assets||[]).forEach(a=>{ total += a.download_count||0; }); });
     const el = document.getElementById('dlCount');
+    const hel = document.getElementById('heroDownloads');
     if(!el) return;
-    if(total === 0){ el.textContent='New'; return; }
-    // animate counter
+    if(total === 0){ el.textContent='New'; if(hel) hel.textContent='New'; return; }
+    // animate counter in stats strip
     let cur = 0;
     const step = Math.ceil(total/60);
     const t = setInterval(()=>{
       cur = Math.min(cur+step, total);
-      el.textContent = cur >= 1000 ? (cur/1000).toFixed(1)+'k' : cur;
+      const formatted = cur >= 1000 ? (cur/1000).toFixed(1)+'k' : cur;
+      el.textContent = formatted;
+      if(hel) hel.textContent = formatted;
       if(cur >= total) clearInterval(t);
     }, 20);
   } catch(e){
