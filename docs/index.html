@@ -438,9 +438,65 @@
       .stat-item { border-right:none; border-bottom:1px solid var(--bord); padding:16px; }
       .stat-item:last-child { border-bottom:none; }
     }
+
+    /* ── MOBILE OVERLAY ── */
+    #mobile-wall {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(5,0,13,0.97); backdrop-filter: blur(20px);
+      flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 32px;
+    }
+    #mobile-wall.show { display: flex; }
+    .mw-icon { font-size: 64px; margin-bottom: 24px; animation: mwBounce 2s ease-in-out infinite; }
+    @keyframes mwBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .mw-title {
+      font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 14px;
+      background: linear-gradient(135deg,#c084fc,#e879f9);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .mw-sub { font-size: 16px; color: var(--text2); line-height: 1.7; max-width: 320px; margin-bottom: 32px; }
+    .mw-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; border-radius: 100px;
+      background: rgba(124,58,237,.15); border: 1px solid rgba(168,85,247,.3);
+      font-size: 14px; font-weight: 600; color: var(--p3); margin-bottom: 12px;
+    }
+    .mw-platforms { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
+    .mw-platform {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 18px; border-radius: 10px;
+      background: rgba(255,255,255,.04); border: 1px solid var(--bord);
+      font-size: 13px; font-weight: 600; color: var(--text2);
+    }
+    .mw-note { margin-top: 28px; font-size: 12px; color: var(--text3); }
   </style>
 </head>
 <body>
+
+<!-- MOBILE WALL -->
+<div id="mobile-wall">
+  <div class="mw-icon">💻</div>
+  <div class="mw-title">Desktop only — for now</div>
+  <p class="mw-sub">
+    WavesConverter is a desktop app that runs locally on your computer.
+    Mobile support isn't available yet, but it's on the roadmap.
+  </p>
+  <div class="mw-badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Download on your PC or Mac
+  </div>
+  <div class="mw-platforms">
+    <div class="mw-platform">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      macOS 12+
+    </div>
+    <div class="mw-platform">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+      Windows 10+
+    </div>
+  </div>
+  <p class="mw-note">Visit wavesconverter on your computer to download</p>
+</div>
 
 <canvas id="particles"></canvas>
 <div class="grid-overlay"></div>
@@ -771,6 +827,13 @@
 </footer>
 
 <script>
+/* ── MOBILE DETECTION ── */
+(function(){
+  const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPad
+  if(isMobile) document.getElementById('mobile-wall').classList.add('show');
+})();
+
 /* ── PARTICLES ── */
 (function(){
   const canvas = document.getElementById('particles');
