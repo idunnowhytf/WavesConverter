@@ -108,6 +108,7 @@ function updateShortcutsUI() {
   const enter = isMac ? '↵' : 'Enter';
   const shift = isMac ? '⇧' : 'Shift+';
   const shortcuts = [
+    { key: 'Alt+Shift+W', desc: 'Pokaż / ukryj program w tle (globalny skrót)' },
     { key: `${mod}V`, desc: 'Wklej URL i wyszukaj automatycznie' },
     { key: `${mod}${enter}`, desc: 'Wyszukaj URL' },
     { key: `${mod}D`, desc: 'Dodaj do kolejki' },

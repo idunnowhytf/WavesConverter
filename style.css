@@ -435,3 +435,32 @@ body.no-animations .orb {
 }
 .btn-welcome:hover { opacity: 0.9; }
 .btn-welcome:active { transform: scale(0.98); }
+
+/* ─── Animated Logo (WavesConverter) ─── */
+.logo-icon {
+  animation: logoPulse 4s ease-in-out infinite;
+}
+.logo-icon svg path {
+  animation: waveMorph 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes logoPulse {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(124,58,237,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+    border-color: rgba(168,85,247,0.3);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(217,70,239,0.55), inset 0 1px 0 rgba(255,255,255,0.15);
+    border-color: rgba(217,70,239,0.6);
+  }
+}
+
+@keyframes waveMorph {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.7) scaleX(0.95);
+  }
+}
