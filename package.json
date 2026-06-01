@@ -27,7 +27,7 @@
     "publish": {
       "provider": "github",
       "owner": "idunnowhytf",
-      "repo": "wavesconvsite",
+      "repo": "WavesConverter",
       "releaseType": "release"
     }
   },
