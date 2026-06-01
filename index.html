@@ -174,7 +174,7 @@
       <div class="ig"><label>Domyślny format audio</label><select id="settingsAudioFormat"><option value="mp3" selected>MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option><option value="aac">AAC</option></select></div>
       <div class="ig"><label>Domyślna jakość</label><select id="settingsQuality"><option value="best" selected>Najlepsza</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select></div>
       <div class="ig"><label>Szablon nazwy pliku</label><select id="settingsFilename"><option value="%(title)s" selected>Tytuł</option><option value="%(uploader)s - %(title)s">Autor – Tytuł</option><option value="%(playlist_index)s. %(title)s">Indeks. Tytuł</option></select></div>
-      <div class="ig" style="flex:2;min-width:280px;"><label>Plik cookies (Instagram Stories / prywatne)</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><input type="text" id="settingsCookies" readonly placeholder="Opcjonalnie: cookies.txt z przeglądarki…"/><button class="btn-ghost-sm" id="btnSettingsCookies">Przeglądaj</button></div></div>
+      <div class="ig" style="flex:2;min-width:280px;"><label>Plik cookies (Instagram — Stories)</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><input type="text" id="settingsCookies" readonly placeholder="Opcjonalnie: cookies.txt z przeglądarki…"/><button class="btn-ghost-sm" id="btnSettingsCookies">Przeglądaj</button></div></div>
       <div class="ig"><label>Efekty i Animacje</label><select id="settingsAnimations"><option value="yes">Włączone ✨</option><option value="no">Wyłączone (Szybki tryb) ⚡</option></select></div>
     </div>
     <button class="btn-primary" id="btnSaveSettings">Zapisz ustawienia</button>
@@ -196,7 +196,7 @@
       <span id="sysInstallProgressLabel" style="font-size:12px; color:var(--text-secondary); margin-top:4px; display:block;">Przygotowywanie...</span>
     </div>
     <p class="sys-hint" style="margin-top:8px;">Brakujące narzędzia? Kliknij przycisk powyżej, aby automatycznie je zainstalować, lub uruchom: <code>brew install yt-dlp ffmpeg</code></p>
-    <p class="sys-hint" style="margin-top:8px;">📸 <strong>Instagram:</strong> posty i Reels działają bez logowania. Stories i treści prywatne często wymagają eksportu <code>cookies.txt</code> (np. rozszerzenie „Get cookies.txt”) i wskazania go powyżej.</p>
+    <p class="sys-hint" style="margin-top:8px;">📸 <strong>Instagram:</strong> bez tego pliku działa tylko <strong>publiczny</strong> content (posty, Reels). <strong>Stories w ogóle nie działają</strong> — ani publiczne, ani prywatne — dopóki nie wskażesz <code>cookies.txt</code> z zalogowanej sesji (np. rozszerzenie „Get cookies.txt LOCALLY”). Konta prywatne też wymagają cookies.</p>
   </div>
   <div class="glass-card">
     <div class="card-label">Aktualizacje</div>

@@ -38,8 +38,53 @@ let tray = null;
 let shareServer = null;
 let isQuitting = false;
 let pendingDeepLink = null;
+let pendingClipboardText = null;
 
 const PROTOCOL = 'wavesconverter';
+
+function isMainWindowAlive() {
+  try {
+    return !!(mainWindow && !mainWindow.isDestroyed());
+  } catch (_) {
+    return false;
+  }
+}
+
+function safeSend(channel, data) {
+  try {
+    if (!isMainWindowAlive()) return false;
+    const wc = mainWindow.webContents;
+    if (!wc || wc.isDestroyed()) return false;
+    mainWindow.webContents.send(channel, data);
+    return true;
+  } catch (e) {
+    console.error('safeSend:', e.message);
+    return false;
+  }
+}
+
+function focusMainWindow() {
+  try {
+    if (!isMainWindowAlive()) return;
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+  } catch (_) {}
+}
+
+function ensureMainWindow() {
+  if (isMainWindowAlive()) return true;
+  createWindow();
+  return isMainWindowAlive();
+}
+
+function flushPendingToRenderer() {
+  flushPendingDeepLink();
+  if (pendingClipboardText) {
+    safeSend('clipboard-search-trigger', pendingClipboardText);
+    pendingClipboardText = null;
+  }
+}
 
 function syncEngineUserData() {
   if (app.isReady()) process.env.WAVESCONVERTER_USER_DATA = app.getPath('userData');
@@ -75,14 +120,16 @@ function registerProtocol() {
 
 function deliverDeepLink(payload) {
   if (!payload) return;
-  if (mainWindow?.webContents && !mainWindow.webContents.isLoading()) {
-    mainWindow.show();
-    mainWindow.focus();
-    mainWindow.webContents.send('deep-link', payload);
-    pendingDeepLink = null;
-  } else {
-    pendingDeepLink = payload;
+  if (isMainWindowAlive()) {
+    const wc = mainWindow.webContents;
+    if (wc && !wc.isDestroyed() && !wc.isLoading()) {
+      focusMainWindow();
+      safeSend('deep-link', payload);
+      pendingDeepLink = null;
+      return;
+    }
   }
+  pendingDeepLink = payload;
 }
 
 function handleDeepLinkUrl(url) {
@@ -213,6 +260,8 @@ function cleanupExtractedFolders(dir) {
 }
 
 function createWindow() {
+  if (isMainWindowAlive()) return;
+
   const isWin = process.platform === 'win32';
   // On Windows, transparent + vibrancy-like effects are a common cause of "app runs but window is invisible".
   // Keep the premium glass look for macOS, but force a safe, opaque window on Windows.
@@ -232,22 +281,30 @@ function createWindow() {
 
   mainWindow = new BrowserWindow(windowOpts);
   mainWindow.loadFile('index.html');
-  mainWindow.once('ready-to-show', () => mainWindow.show());
+  mainWindow.once('ready-to-show', () => {
+    if (isMainWindowAlive()) mainWindow.show();
+  });
   // Fallback: if ready-to-show never fires, still show the window.
   setTimeout(() => {
     try {
-      if (mainWindow && !mainWindow.isVisible()) mainWindow.show();
+      if (isMainWindowAlive() && !mainWindow.isVisible()) mainWindow.show();
     } catch (_) {}
   }, 2500);
-  mainWindow.webContents.on('did-finish-load', flushPendingDeepLink);
-  mainWindow.on('maximize',   () => mainWindow.webContents.send('window-state', 'maximized'));
-  mainWindow.on('unmaximize', () => mainWindow.webContents.send('window-state', 'normal'));
-  
+  mainWindow.webContents.on('did-finish-load', flushPendingToRenderer);
+  mainWindow.on('maximize', () => safeSend('window-state', 'maximized'));
+  mainWindow.on('unmaximize', () => safeSend('window-state', 'normal'));
+  mainWindow.on('closed', () => { mainWindow = null; });
+
   // Close to tray logic
   mainWindow.on('close', (event) => {
     if (!isQuitting && !isDev) {
       event.preventDefault();
-      mainWindow.hide();
+      const win = mainWindow;
+      setImmediate(() => {
+        try {
+          if (win && !win.isDestroyed()) win.hide();
+        } catch (_) {}
+      });
       return false;
     }
   });
@@ -269,7 +326,7 @@ function createTray() {
   tray.setContextMenu(contextMenu);
   
   tray.on('click', () => {
-    if (mainWindow?.isVisible()) {
+    if (isMainWindowAlive() && mainWindow.isVisible()) {
       mainWindow.hide();
     } else {
       showAndCheckClipboard();
@@ -280,22 +337,25 @@ function createTray() {
 function registerGlobalShortcut() {
   // Alt+Shift+W is a safe global shortcut combination
   globalShortcut.register('Alt+Shift+W', () => {
-    if (mainWindow) {
-      if (mainWindow.isVisible() && mainWindow.isFocused()) {
-        mainWindow.hide();
-      } else {
-        showAndCheckClipboard();
-      }
+    if (isMainWindowAlive() && mainWindow.isVisible() && mainWindow.isFocused()) {
+      mainWindow.hide();
+    } else {
+      showAndCheckClipboard();
     }
   });
 }
 
 function showAndCheckClipboard() {
-  if (mainWindow) {
-    mainWindow.show();
-    mainWindow.focus();
-    const text = clipboard.readText();
-    mainWindow.webContents.send('clipboard-search-trigger', text);
+  const text = clipboard.readText();
+  if (!ensureMainWindow()) {
+    if (text) pendingClipboardText = text;
+    return;
+  }
+  focusMainWindow();
+  if (text) {
+    if (!safeSend('clipboard-search-trigger', text)) {
+      pendingClipboardText = text;
+    }
   }
 }
 
@@ -306,10 +366,8 @@ if (!gotSingleInstanceLock) {
   app.on('second-instance', (_, argv) => {
     const link = engine.findDeepLinkInArgv(argv);
     if (link) handleDeepLinkUrl(link);
-    if (mainWindow) {
-      mainWindow.show();
-      mainWindow.focus();
-    }
+    if (!isMainWindowAlive()) ensureMainWindow();
+    else focusMainWindow();
   });
 
   app.on('open-url', (event, url) => {
@@ -337,12 +395,7 @@ if (!gotSingleInstanceLock) {
     }
     // In dev mode, always force focus/visibility to avoid "running but no window" confusion.
     if (isDev) {
-      setTimeout(() => {
-        try {
-          mainWindow?.show();
-          mainWindow?.focus();
-        } catch (_) {}
-      }, 800);
+      setTimeout(() => focusMainWindow(), 800);
     }
     setupAutoUpdater();
   });
@@ -356,11 +409,8 @@ if (!gotSingleInstanceLock) {
   });
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    } else {
-      mainWindow?.show();
-    }
+    if (!isMainWindowAlive()) createWindow();
+    else focusMainWindow();
   });
 }
 
@@ -370,12 +420,12 @@ function setupAutoUpdater() {
     const { autoUpdater } = require('electron-updater');
     autoUpdater.autoDownload = true;
     autoUpdater.autoInstallOnAppQuit = true;
-    autoUpdater.on('checking-for-update', () => mainWindow?.webContents.send('update-status', { type: 'checking' }));
-    autoUpdater.on('update-available', info => mainWindow?.webContents.send('update-status', { type: 'available', version: info.version }));
-    autoUpdater.on('update-not-available', () => mainWindow?.webContents.send('update-status', { type: 'latest' }));
-    autoUpdater.on('download-progress', p => mainWindow?.webContents.send('update-status', { type: 'downloading', percent: Math.round(p.percent) }));
-    autoUpdater.on('update-downloaded', info => mainWindow?.webContents.send('update-status', { type: 'ready', version: info.version }));
-    autoUpdater.on('error', err => mainWindow?.webContents.send('update-status', { type: 'error', message: err.message }));
+    autoUpdater.on('checking-for-update', () => safeSend('update-status', { type: 'checking' }));
+    autoUpdater.on('update-available', info => safeSend('update-status', { type: 'available', version: info.version }));
+    autoUpdater.on('update-not-available', () => safeSend('update-status', { type: 'latest' }));
+    autoUpdater.on('download-progress', p => safeSend('update-status', { type: 'downloading', percent: Math.round(p.percent) }));
+    autoUpdater.on('update-downloaded', info => safeSend('update-status', { type: 'ready', version: info.version }));
+    autoUpdater.on('error', err => safeSend('update-status', { type: 'error', message: err.message }));
     autoUpdater.checkForUpdatesAndNotify();
   } catch (e) { console.error('Updater error:', e.message); }
 }
@@ -384,9 +434,12 @@ ipcMain.on('install-update', () => { if (app.isPackaged) try { require('electron
 ipcMain.handle('check-update', async () => { if (!app.isPackaged) return { type: 'dev' }; try { await require('electron-updater').autoUpdater.checkForUpdates(); } catch (e) { return { type: 'error', message: e.message }; } });
 ipcMain.handle('get-version', () => app.getVersion());
 
-ipcMain.on('window-minimize', () => mainWindow.minimize());
-ipcMain.on('window-maximize', () => mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize());
-ipcMain.on('window-close', () => mainWindow.close());
+ipcMain.on('window-minimize', () => { if (isMainWindowAlive()) mainWindow.minimize(); });
+ipcMain.on('window-maximize', () => {
+  if (!isMainWindowAlive()) return;
+  mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize();
+});
+ipcMain.on('window-close', () => { if (isMainWindowAlive()) mainWindow.close(); });
 
 ipcMain.handle('choose-folder', async () => { const r = await dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] }); return r.canceled ? null : r.filePaths[0]; });
 ipcMain.handle('choose-file', async () => { const r = await dialog.showOpenDialog(mainWindow, { properties: ['openFile'], filters: [{ name: 'Media', extensions: ['mp4','mkv','avi','mov','webm','mp3','wav','flac','aac','m4a','ogg'] }] }); return r.canceled ? null : r.filePaths[0]; });
@@ -494,10 +547,10 @@ ipcMain.handle('start-download', (_, job) => {
   return engine.runDownload(job, {
     onSpawn: proc => active.set(id, proc),
     onProgress: (progress, line) => {
-      mainWindow?.webContents.send('download-progress', { id, progress, line });
-      mainWindow?.webContents.send('download-log', { id, line });
+      safeSend('download-progress', { id, progress, line });
+      safeSend('download-log', { id, line });
     },
-    onLog: line => mainWindow?.webContents.send('download-log', { id, line }),
+    onLog: line => safeSend('download-log', { id, line }),
   }).finally(() => active.delete(id));
 });
 
@@ -508,7 +561,7 @@ ipcMain.handle('convert-file', (_, job) => {
   const { id } = job;
   return engine.runConvert(job, {
     onSpawn: proc => active.set(id, proc),
-    onProgress: time => mainWindow?.webContents.send('convert-progress', { id, time }),
+    onProgress: time => safeSend('convert-progress', { id, time }),
   }).finally(() => active.delete(id));
 });
 

@@ -566,7 +566,7 @@
           <tr><td data-i18n="sig.row.reel">Reels</td><td><code>instagram.com/reel/…</code></td><td data-i18n="sig.row.reel.n">Wideo — najczęstszy przypadek</td></tr>
           <tr><td data-i18n="sig.row.post">Post (zdjęcie / wideo)</td><td><code>instagram.com/p/…</code></td><td data-i18n="sig.row.post.n">Pojedynczy post lub karuzela</td></tr>
           <tr><td data-i18n="sig.row.tv">IGTV</td><td><code>instagram.com/tv/…</code></td><td data-i18n="sig.row.tv.n">Dłuższe wideo</td></tr>
-          <tr><td data-i18n="sig.row.story">Stories</td><td><code>instagram.com/stories/…</code></td><td data-i18n="sig.row.story.n">Często wymaga pliku cookies (patrz niżej)</td></tr>
+          <tr><td data-i18n="sig.row.story">Stories</td><td><code>instagram.com/stories/…</code></td><td data-i18n="sig.row.story.n">Nie działają bez cookies — ani publiczne, ani prywatne</td></tr>
         </tbody>
       </table>
 
@@ -585,8 +585,8 @@
         </div>
       </div>
 
-      <h3 data-i18n="sig.h.cookies">Stories i treści prywatne — plik cookies</h3>
-      <p data-i18n="sig.p.cookies">Instagram często blokuje Stories i konta prywatne bez sesji. W <strong>Ustawienia</strong> → pole <strong>Plik cookies (Instagram)</strong> wskaż plik <code>cookies.txt</code> wyeksportowany z przeglądarki (format Netscape, np. rozszerzenie „Get cookies.txt LOCALLY”). Zaloguj się na instagram.com w tej samej przeglądarce przed eksportem.</p>
+      <h3 data-i18n="sig.h.cookies">Plik cookies — Stories i konta prywatne</h3>
+      <p data-i18n="sig.p.cookies">Bez pliku cookies działa tylko <strong>publiczny</strong> content (posty, Reels). <strong>Stories w ogóle nie działają</strong> — ani publiczne, ani prywatne — dopóki nie wskażesz <code>cookies.txt</code> z zalogowanej sesji. Konta prywatne też wymagają cookies. W <strong>Ustawienia</strong> → <strong>Plik cookies (Instagram)</strong> wybierz plik wyeksportowany z przeglądarki (format Netscape, np. rozszerzenie „Get cookies.txt LOCALLY”). Zaloguj się na instagram.com w tej samej przeglądarce przed eksportem.</p>
 
       <div class="note">
         <span class="note-icon">⚖️</span>
@@ -983,12 +983,12 @@ const T = {
     'sig.row.tv': 'IGTV',
     'sig.row.tv.n': 'Dłuższe wideo',
     'sig.row.story': 'Stories',
-    'sig.row.story.n': 'Często wymaga pliku cookies (patrz niżej)',
+    'sig.row.story.n': 'Nie działają bez cookies — ani publiczne, ani prywatne',
     'sig.step1': '<strong>Skopiuj link</strong> z aplikacji Instagram (Udostępnij → Kopiuj link) i wklej w pole URL w zakładce Pobierz.',
     'sig.step2': '<strong>Fetch</strong> — aplikacja pobierze metadane. Dla karuzeli możesz wybrać konkretne media, jeśli yt-dlp zwróci wiele plików.',
     'sig.step3': '<strong>Format</strong> — wideo zapiszesz jako MP4 itd.; z postów ze zdjęciami często pobierane jest najlepsze dostępne wideo lub obraz.',
-    'sig.h.cookies': 'Stories i treści prywatne — plik cookies',
-    'sig.p.cookies': 'Instagram często blokuje Stories i konta prywatne bez sesji. W <strong>Ustawienia</strong> → pole <strong>Plik cookies (Instagram)</strong> wskaż plik <code>cookies.txt</code> wyeksportowany z przeglądarki (format Netscape, np. rozszerzenie „Get cookies.txt LOCALLY”). Zaloguj się na instagram.com w tej samej przeglądarce przed eksportem.',
+    'sig.h.cookies': 'Plik cookies — Stories i konta prywatne',
+    'sig.p.cookies': 'Bez pliku cookies działa tylko <strong>publiczny</strong> content (posty, Reels). <strong>Stories w ogóle nie działają</strong> — ani publiczne, ani prywatne — dopóki nie wskażesz <code>cookies.txt</code> z zalogowanej sesji. Konta prywatne też wymagają cookies. W <strong>Ustawienia</strong> → <strong>Plik cookies (Instagram)</strong> wybierz plik wyeksportowany z przeglądarki (format Netscape, np. rozszerzenie „Get cookies.txt LOCALLY”). Zaloguj się na instagram.com w tej samej przeglądarce przed eksportem.',
     'sig.note.legal': 'Pobieraj tylko treści, do których masz prawo (własne materiały lub za zgodą autora). WavesConverter nie omija haseł Instagrama — cookies to Twoja sesja przeglądarki, nie „łamanie” zabezpieczeń.',
     's3.title': 'Pobieranie playlist',
     's3.intro': 'WavesConverter obsługuje pełne playlisty YouTube — możesz pobrać wszystkie filmy lub wybrać konkretne pozycje.',
@@ -1171,12 +1171,12 @@ const T = {
     'sig.row.tv': 'IGTV',
     'sig.row.tv.n': 'Long-form video',
     'sig.row.story': 'Stories',
-    'sig.row.story.n': 'Often requires a cookies file (see below)',
+    'sig.row.story.n': 'Do not work without cookies — public or private',
     'sig.step1': '<strong>Copy the link</strong> from the Instagram app (Share → Copy link) and paste it into the Download tab URL field.',
     'sig.step2': '<strong>Fetch</strong> — the app loads metadata. For carousels you may pick specific items if yt-dlp returns multiple files.',
     'sig.step3': '<strong>Format</strong> — save video as MP4 etc.; photo posts may download the best available image or video.',
-    'sig.h.cookies': 'Stories & private content — cookies file',
-    'sig.p.cookies': 'Instagram often blocks Stories and private accounts without a session. In <strong>Settings</strong> → <strong>Instagram cookies file</strong>, point to a <code>cookies.txt</code> exported from your browser (Netscape format, e.g. “Get cookies.txt LOCALLY”). Log in to instagram.com in that browser before exporting.',
+    'sig.h.cookies': 'Cookies file — Stories & private accounts',
+    'sig.p.cookies': 'Without a cookies file, only <strong>public</strong> content works (posts, Reels). <strong>Stories do not work at all</strong> — public or private — until you provide <code>cookies.txt</code> from a logged-in session. Private accounts also require cookies. In <strong>Settings</strong> → <strong>Instagram cookies file</strong>, select a browser export (Netscape format, e.g. “Get cookies.txt LOCALLY”). Log in to instagram.com in that browser before exporting.',
     'sig.note.legal': 'Only download content you are allowed to use (your own media or with permission). WavesConverter does not crack Instagram passwords — cookies are your browser session, not a bypass.',
     's3.title': 'Downloading Playlists',
     's3.intro': 'WavesConverter supports full YouTube playlists — download all videos or cherry-pick specific ones.',

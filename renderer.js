@@ -308,7 +308,7 @@ async function doFetch() {
   currentFetchUrl=url;
   currentFetchPlatform=await window.api.getUrlPlatform(url);
   if(currentFetchPlatform==='instagram'&&url.toLowerCase().includes('/stories/')) {
-    toast('Stories: konto prywatne może wymagać pliku cookies (Ustawienia).','info');
+    toast('Stories: bez pliku cookies nie zadziałają (publiczne ani prywatne). Ustawienia → cookies.txt','info');
   }
   const btn=document.getElementById('btnFetch');
   btn.disabled=true;
