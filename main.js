@@ -4,10 +4,13 @@ const fs = require('fs');
 const { spawn, exec } = require('child_process');
 const os = require('os');
 const https = require('https');
+const http = require('http');
+const QRCode = require('qrcode');
 
 let mainWindow;
 let ytDlpPath;
 let tray = null;
+let shareServer = null;
 let isQuitting = false;
 
 function findYtDlp() {
@@ -461,7 +464,7 @@ ipcMain.handle('start-download', (_, job) => new Promise((resolve, reject) => {
           fileSize = fs.statSync(finalPath).size;
         }
       } catch (_) {}
-      resolve({ success: true, size: fileSize });
+      resolve({ success: true, size: fileSize, path: finalPath });
     } else {
       reject(new Error(`Exit ${code}`));
     }
@@ -558,4 +561,79 @@ ipcMain.handle('convert-file', (_, job) => new Promise((resolve, reject) => {
 // Expose download-thumbnail handler
 ipcMain.handle('download-thumbnail', async (_, { url, dest }) => {
   return downloadFile(url, dest);
+});
+
+// Wi-Fi Local File Sharing Server Handlers
+ipcMain.handle('start-share-server', async (event, { filePath, fileName }) => {
+  if (!fs.existsSync(filePath)) {
+    throw new Error('Plik nie istnieje lub został usunięty z dysku.');
+  }
+
+  if (shareServer) {
+    try {
+      shareServer.close();
+    } catch (_) {}
+    shareServer = null;
+  }
+
+  // Get local IP address
+  const networkInterfaces = os.networkInterfaces();
+  let localIp = '127.0.0.1';
+  for (const name of Object.keys(networkInterfaces)) {
+    for (const iface of networkInterfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        localIp = iface.address;
+        break;
+      }
+    }
+    if (localIp !== '127.0.0.1') break;
+  }
+
+  return new Promise((resolve, reject) => {
+    shareServer = http.createServer((req, res) => {
+      if (fs.existsSync(filePath)) {
+        const stat = fs.statSync(filePath);
+        const safeFileName = fileName.replace(/["\\]/g, ''); // strip quotes and backslashes
+        res.writeHead(200, {
+          'Content-Type': 'application/octet-stream',
+          'Content-Length': stat.size,
+          'Content-Disposition': `attachment; filename="${encodeURIComponent(safeFileName)}"; filename*=UTF-8''${encodeURIComponent(safeFileName)}`
+        });
+        const readStream = fs.createReadStream(filePath);
+        readStream.pipe(res);
+      } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('Plik nie istnieje lub został usunięty.');
+      }
+    });
+
+    shareServer.listen(0, localIp, async () => {
+      const port = shareServer.address().port;
+      const shareUrl = `http://${localIp}:${port}/download`;
+      try {
+        const qrDataUrl = await QRCode.toDataURL(shareUrl, {
+          color: {
+            dark: '#1e0b36',
+            light: '#f0e6ff'
+          },
+          margin: 2
+        });
+        resolve({ shareUrl, qrDataUrl });
+      } catch (err) {
+        reject(err);
+      }
+    });
+
+    shareServer.on('error', (err) => {
+      reject(err);
+    });
+  });
+});
+
+ipcMain.handle('stop-share-server', async () => {
+  if (shareServer) {
+    shareServer.close();
+    shareServer = null;
+  }
+  return { success: true };
 });

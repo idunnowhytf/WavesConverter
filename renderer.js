@@ -501,6 +501,7 @@ async function processQueue() {
     window.api.startDownload(next).then((res)=>{
       next.status='done'; next.progress=100;
       next.size = res?.size || 0;
+      next.filePath = res?.path || '';
       renderQueue(); bumpBadge();
       toast(`✓ ${next.title}`,'success');
       sysNotify('Pobieranie zakończone', next.title);
@@ -537,6 +538,7 @@ function addToHistory(job) {
     quality: job.quality,
     audioOnly: job.audioOnly,
     outputDir: job.outputDir,
+    filePath: job.filePath || '',
     size: job.size || 0,
     date: new Date().toISOString()
   };
@@ -569,7 +571,8 @@ function renderHistory() {
         <div class="hitem-meta"><span>${escHtml(tags)}</span><span>${escHtml(entry.outputDir||'')}</span></div>
       </div>
       <div class="hitem-date">${escHtml(dateStr)}</div>
-      <button class="btn-ghost-sm" onclick="window.api.openFolder('${escAttr(entry.outputDir)}')">Otwórz</button>`;
+      <button class="btn-ghost-sm" onclick="window.api.openFolder('${escAttr(entry.outputDir)}')">Otwórz</button>
+      <button class="btn-ghost-sm" style="margin-left: 6px;" onclick="shareFile('${escAttr(entry.filePath || '')}', '${escAttr(entry.title || '')}', '${escAttr(entry.outputDir || '')}', '${escAttr(entry.outputFormat || 'mp4')}')">📲 Wyślij na telefon</button>`;
     list.appendChild(div);
   });
 }
@@ -782,4 +785,67 @@ function updateStatsDashboard() {
 
   const savedMinutes = Math.round((totalFiles * 30) / 60);
   statTime.textContent = savedMinutes === 0 ? '< 1 min' : `${savedMinutes} min`;
+}
+
+window.shareFile = async (filePath, title, outputDir, ext) => {
+  let path = filePath;
+  if (!path && outputDir && title) {
+    const isWin = navigator.platform.toLowerCase().includes('win') || navigator.userAgent.toLowerCase().includes('win');
+    const separator = isWin ? '\\' : '/';
+    const cleanTitle = title.replace(/[<>:"/\\|?*]/g, '_');
+    path = outputDir + separator + cleanTitle + '.' + ext;
+  }
+  
+  const overlay = document.getElementById('shareOverlay');
+  const qrImage = document.getElementById('shareQrImage');
+  const qrLoading = document.getElementById('shareQrLoading');
+  const urlText = document.getElementById('shareUrlText');
+  
+  if (!overlay || !qrImage || !qrLoading || !urlText) return;
+  
+  qrImage.style.display = 'none';
+  qrLoading.style.display = 'block';
+  qrLoading.textContent = 'Generowanie kodu QR…';
+  urlText.textContent = 'Trwa uruchamianie serwera…';
+  overlay.classList.remove('hidden');
+  
+  try {
+    const res = await window.api.startShareServer({ filePath: path, fileName: title + '.' + ext });
+    if (res && res.qrDataUrl && res.shareUrl) {
+      qrImage.src = res.qrDataUrl;
+      qrImage.style.display = 'block';
+      qrLoading.style.display = 'none';
+      urlText.textContent = res.shareUrl;
+    } else {
+      throw new Error('Nie otrzymano kodu QR');
+    }
+  } catch (err) {
+    qrLoading.textContent = 'Błąd uruchamiania serwera ✗';
+    urlText.textContent = err.message || 'Nieznany błąd';
+  }
+};
+
+async function closeShareModal() {
+  await window.api.stopShareServer();
+  const overlay = document.getElementById('shareOverlay');
+  if (overlay) overlay.classList.add('hidden');
+}
+
+const btnStopShare = document.getElementById('btnStopShare');
+if (btnStopShare) {
+  btnStopShare.addEventListener('click', closeShareModal);
+}
+
+const btnShareClose = document.getElementById('btnShareClose');
+if (btnShareClose) {
+  btnShareClose.addEventListener('click', closeShareModal);
+}
+
+const shareOverlay = document.getElementById('shareOverlay');
+if (shareOverlay) {
+  shareOverlay.addEventListener('click', (e) => {
+    if (e.target === shareOverlay) {
+      closeShareModal();
+    }
+  });
 }
