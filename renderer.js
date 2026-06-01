@@ -472,7 +472,19 @@ function loadHistory() { try{ const h=localStorage.getItem('wc2_history'); if(h)
 function initSettingsTab() {
   document.getElementById('btnSettingsDir').addEventListener('click', async()=>{ const d=await window.api.chooseFolder(); if(d) document.getElementById('settingsDir').value=d; });
   document.getElementById('btnSaveSettings').addEventListener('click', saveAndApply);
-  document.getElementById('btnCheckUpdate').addEventListener('click', async()=>{ document.getElementById('updateStatusText').textContent='Checking…'; await window.api.checkUpdate(); });
+  document.getElementById('btnCheckUpdate').addEventListener('click', async()=>{
+    const stxt = document.getElementById('updateStatusText');
+    stxt.textContent = 'Checking…';
+    try {
+      const res = await window.api.checkUpdate();
+      if (res) {
+        if (res.type === 'dev') stxt.textContent = 'Updates only work in production builds';
+        else if (res.type === 'error') stxt.textContent = 'Update check failed: ' + (res.message || 'Unknown error');
+      }
+    } catch (e) {
+      stxt.textContent = 'Update check failed: ' + e.message;
+    }
+  });
   document.getElementById('btnInstallUpdate').addEventListener('click', ()=>window.api.installUpdate());
   document.getElementById('btnInstallTools').addEventListener('click', runInstallTools);
   document.getElementById('settingsDir').value=settings.outputDir;
