@@ -112,7 +112,7 @@ body { display:flex; flex-direction:column; position:relative; z-index:1; }
 .folder-input { display:flex; align-items:center; gap:8px; background:rgba(0,0,0,0.35); border:1px solid var(--border); border-radius:var(--rss); padding:6px 8px 6px 10px; transition:border-color 0.15s,box-shadow 0.15s; }
 .folder-input:focus-within { border-color:var(--p3); box-shadow:0 0 0 3px rgba(124,58,237,0.12); }
 .folder-input svg { color:var(--text3); flex-shrink:0; }
-.folder-input input { flex:1; border:none; background:transparent; color:var(--text); font-size:13px; outline:none; }
+.folder-input input { flex:1; border:none !important; background:transparent !important; color:var(--text); font-size:13px; outline:none; padding:0 !important; height:auto !important; box-shadow:none !important; }
 .folder-input input::placeholder { color:var(--text3); }
 .folder-row { display:flex; gap:12px; align-items:flex-end; }
 
@@ -455,6 +455,10 @@ body.theme-material .tab-content {
   width: 100% !important;
   overflow-y: auto !important;
   padding: 0 !important;
+  display: none !important;
+}
+body.theme-material .tab-content.active {
+  display: block !important;
 }
 
 /* Material Fully Rounded (Pill) Controls */
@@ -535,7 +539,7 @@ body.theme-material .url-input-wrap {
   border: 1px dashed rgba(168,85,247,0.3);
 }
 .theme-preview-material {
-  background: linear-gradient(135deg, #141218, #49454f);
+  background: linear-gradient(135deg, #120d1e, #6750a4);
   border: 1px dashed rgba(208,188,255,0.3);
 }
 .preview-dot {
