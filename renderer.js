@@ -474,12 +474,41 @@ function initSettingsTab() {
   document.getElementById('btnSaveSettings').addEventListener('click', saveAndApply);
   document.getElementById('btnCheckUpdate').addEventListener('click', async()=>{ document.getElementById('updateStatusText').textContent='Checking…'; await window.api.checkUpdate(); });
   document.getElementById('btnInstallUpdate').addEventListener('click', ()=>window.api.installUpdate());
+  document.getElementById('btnInstallTools').addEventListener('click', runInstallTools);
   document.getElementById('settingsDir').value=settings.outputDir;
   document.getElementById('settingsConcurrent').value=settings.concurrent;
   document.getElementById('settingsVideoFormat').value=settings.videoFormat;
   document.getElementById('settingsAudioFormat').value=settings.audioFormat;
   document.getElementById('settingsQuality').value=settings.quality;
   document.getElementById('settingsFilename').value=settings.filenameTemplate;
+}
+
+async function runInstallTools() {
+  const btn = document.getElementById('btnInstallTools');
+  const wrap = document.getElementById('sysInstallProgressWrap');
+  const bar = document.getElementById('sysInstallProgressBar');
+  const lbl = document.getElementById('sysInstallProgressLabel');
+  
+  btn.disabled = true;
+  wrap.classList.remove('hidden');
+  bar.style.background = '';
+  bar.style.width = '5%';
+  lbl.textContent = 'Starting installation...';
+  
+  try {
+    await window.api.installTools();
+    bar.style.width = '100%';
+    lbl.textContent = 'Tools installed successfully! ✓';
+    toast('Tools installed successfully!', 'success');
+    await checkStatus();
+  } catch (e) {
+    bar.style.width = '100%';
+    bar.style.background = 'var(--danger)';
+    lbl.textContent = 'Installation failed: ' + e.message;
+    toast('Installation failed: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 function saveAndApply() {
@@ -511,6 +540,12 @@ function initIpc() {
     if(info.type==='downloading') stxt.textContent=`Downloading update… ${info.percent}%`;
     if(info.type==='error') stxt.textContent='Update check failed: '+info.message;
     if(info.type==='dev') stxt.textContent='Updates only work in production builds';
+  });
+  window.api.onInstallStatus(({ status, progress, message }) => {
+    const bar = document.getElementById('sysInstallProgressBar');
+    const lbl = document.getElementById('sysInstallProgressLabel');
+    if (bar) bar.style.width = progress + '%';
+    if (lbl) lbl.textContent = message;
   });
 }
 

@@ -21,4 +21,6 @@ contextBridge.exposeInMainWorld('api', {
   checkUpdate: () => ipcRenderer.invoke('check-update'),
   installUpdate: () => ipcRenderer.send('install-update'),
   onUpdateStatus: (cb) => ipcRenderer.on('update-status', (_, d) => cb(d)),
+  installTools: () => ipcRenderer.invoke('install-tools'),
+  onInstallStatus: (cb) => ipcRenderer.on('install-status', (_, d) => cb(d)),
 });
