@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/idunnowhytf/wavesconvsite/main/docs/og.png" alt="WavesConverter" width="100%"/>
+<img src="https://res.cloudinary.com/dyozzp82h/image/upload/v1780340750/background-removed-background-removed_ffwzad.png" alt="WavesConverter" width="100%"/>
 
 <br/>
 
