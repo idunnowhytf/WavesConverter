@@ -525,7 +525,7 @@
       <div class="step-list">
         <div class="step-item">
           <div class="step-n">1</div>
-          <div class="step-body"><p data-i18n="s2.step1"><strong>Wklej URL</strong> — skopiuj link do filmu (youtube.com/watch, youtu.be lub Shorts) i naciśnij <kbd class="kbd">⌘V</kbd> (macOS) lub <kbd class="kbd">Ctrl+V</kbd> (Windows). Link automatycznie pojawi się w polu i zacznie się pobieranie metadanych.</p></div>
+          <div class="step-body"><p data-i18n="s2.step1"><strong>Wklej URL</strong> — skopiuj link do filmu (youtube.com/watch, youtu.be lub Shorts) i naciśnij <kbd class="kbd">⌘V</kbd> (macOS) lub <kbd class="kbd">Ctrl+V</kbd> (Windows). Możesz też użyć prefiksu <code>wavesconverter://</code> przed linkiem (<a href="#deeplink">więcej</a>). Link automatycznie pojawi się w polu i zacznie się pobieranie metadanych.</p></div>
         </div>
         <div class="step-item">
           <div class="step-n">2</div>
@@ -755,7 +755,16 @@
       <h2><span class="section-icon">🔗</span><span data-i18n="sdeeplink.title">Deep linking</span></h2>
       <p data-i18n="sdeeplink.intro">Po instalacji aplikacji desktopowej system rejestruje niestandardowy protokół <code>wavesconverter://</code>. Linki w tym formacie otwierają WavesConverter i przekazują akcję oraz opcjonalnie URL filmu (YouTube lub Instagram).</p>
 
-      <h3 data-i18n="sdeeplink.h.how">Jak to działa</h3>
+      <h3 data-i18n="sdeeplink.h.prefix">Skrót: prefiks przed linkiem</h3>
+      <p data-i18n="sdeeplink.p.prefix">Nie musisz budować pełnego deep linka z parametrami — możesz po prostu <strong>dopisać</strong> <code>wavesconverter://</code> przed zwykłym adresem YouTube lub Instagram. Aplikacja (i CLI) sama rozpoznają link i zamieniają go na czysty <code>https://…</code>.</p>
+      <div class="code-block">
+        <div class="code-block-label" data-i18n="sdeeplink.code.prefix">Wklejanie w aplikacji / schowku</div>
+        <pre>wavesconverter://https://youtu.be/dQw4w9WgXcQ
+wavesconverter://www.instagram.com/reel/ABC123/</pre>
+      </div>
+      <p data-i18n="sdeeplink.p.prefix.where">Działa w: polu URL (zakładka Pobierz), auto-wykrywaniu schowka (skrót globalny), wklejaniu ⌘V/Ctrl+V oraz w terminalu (<code>wavesconv</code>, tryb interaktywny i <code>wavesconv download …</code>). Po rozpoznaniu w polu zostaje już tylko zwykły link HTTPS.</p>
+
+      <h3 data-i18n="sdeeplink.h.how">Jak to działa (pełne deep linki)</h3>
       <div class="step-list">
         <div class="step-item">
           <div class="step-n">1</div>
@@ -779,6 +788,8 @@
       <table class="kb-table">
         <thead><tr><th data-i18n="sdeeplink.th.link">Link</th><th data-i18n="sdeeplink.th.action">Działanie</th></tr></thead>
         <tbody>
+          <tr><td><code>wavesconverter://https://youtu.be/…</code></td><td data-i18n="sdeeplink.row.prefix">Prefiks przed zwykłym linkiem — wyszukaj / otwórz (bez kodowania URL)</td></tr>
+          <tr><td><code>wavesconverter://youtu.be/…</code></td><td data-i18n="sdeeplink.row.prefixshort">Ten sam skrót bez <code>https://</code></td></tr>
           <tr><td><code>wavesconverter://open</code></td><td data-i18n="sdeeplink.row.open">Tylko otwórz aplikację</td></tr>
           <tr><td><code>wavesconverter://download?url=ENCODED</code></td><td data-i18n="sdeeplink.row.download">Wklej URL i wyszukaj metadane</td></tr>
           <tr><td><code>wavesconverter://queue?url=ENCODED&amp;start=1</code></td><td data-i18n="sdeeplink.row.queue">Dodaj do kolejki i rozpocznij pobieranie</td></tr>
@@ -788,7 +799,11 @@
 
       <h3 data-i18n="sdeeplink.h.examples">Przykłady</h3>
       <div class="code-block">
-        <div class="code-block-label">YouTube</div>
+        <div class="code-block-label" data-i18n="sdeeplink.code.prefixyt">YouTube — prefiks (najprostsze)</div>
+        <pre>wavesconverter://https://www.youtube.com/watch?v=dQw4w9WgXcQ</pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-label">YouTube — pełny deep link</div>
         <pre>wavesconverter://download?url=https%3A%2F%2Fyoutu.be%2FdQw4w9WgXcQ</pre>
       </div>
       <div class="code-block">
@@ -817,17 +832,19 @@ wavesconv --version</pre>
       <p data-i18n="scli.p.install">Przy pierwszym użyciu uruchom <code>wavesconv tools install</code>, aby pobrać yt-dlp. Do konwersji plików potrzebny jest też <code>ffmpeg</code> w PATH (lub zainstaluj go z poziomu aplikacji desktop).</p>
 
       <h3 data-i18n="scli.h.interactive">Tryb interaktywny (wklej linki)</h3>
-      <p data-i18n="scli.p.interactive">Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube lub Instagram i naciśnij Enter — pobieranie startuje automatycznie.</p>
+      <p data-i18n="scli.p.interactive">Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube lub Instagram (opcjonalnie z prefiksem <code>wavesconverter://</code>) i naciśnij Enter — pobieranie startuje automatycznie.</p>
       <div class="code-block">
         <div class="code-block-label" data-i18n="scli.code.interactive">Terminal</div>
         <pre>wavesconv
-# 🔗 Wklej link › https://youtu.be/…</pre>
+# 🔗 Wklej link › https://youtu.be/…
+# lub: wavesconverter://https://youtu.be/…</pre>
       </div>
 
       <h3 data-i18n="scli.h.commands">Polecenia jednorazowe</h3>
       <div class="code-block">
         <div class="code-block-label" data-i18n="scli.code.download">Pobieranie</div>
         <pre>wavesconv download "https://youtu.be/…" -a -f mp3
+wavesconv download "wavesconverter://https://youtu.be/…" -a -f mp3
 wavesconv download "URL" -q 1080p -o C:\Videos</pre>
       </div>
       <div class="code-block">
@@ -944,7 +961,7 @@ const T = {
     's1.win.note': 'WavesConverter jest bezpieczny i open source, ale nie jest jeszcze podpisany płatnym certyfikatem Microsoft. To normalne dla nowego oprogramowania indie. Kod źródłowy jest publiczny na GitHub.',
     's2.title': 'Pobieranie filmów',
     's2.intro': 'Aby pobrać pojedynczy film z <strong>YouTube</strong> (lub publiczną treść z Instagram — patrz sekcja <a href="#instagram">Instagram</a>), wykonaj poniższe kroki:',
-    's2.step1': '<strong>Wklej URL</strong> — skopiuj link do filmu (youtube.com/watch, youtu.be lub Shorts) i naciśnij <kbd class="kbd">⌘V</kbd> (macOS) lub <kbd class="kbd">Ctrl+V</kbd> (Windows). Link automatycznie pojawi się w polu i zacznie się pobieranie metadanych.',
+    's2.step1': '<strong>Wklej URL</strong> — skopiuj link do filmu (youtube.com/watch, youtu.be lub Shorts) i naciśnij <kbd class="kbd">⌘V</kbd> (macOS) lub <kbd class="kbd">Ctrl+V</kbd> (Windows). Możesz też użyć prefiksu <code>wavesconverter://</code> przed linkiem (<a href="#deeplink">więcej</a>). Link automatycznie pojawi się w polu i zacznie się pobieranie metadanych.',
     's2.step2': '<strong>Kliknij Fetch</strong> — aplikacja pobierze tytuł, miniaturę i dostępne formaty z YouTube.',
     's2.step3': '<strong>Wybierz format i jakość</strong> — przełącz między Video / Audio, wybierz format (MP4, MKV, MOV, WebM dla wideo; MP3, WAV, FLAC, M4A dla audio) oraz rozdzielczość lub bitrate.',
     's2.step4': '<strong>Dodaj do kolejki</strong> — kliknij <strong>Add to Queue</strong> lub naciśnij <kbd class="kbd">⌘D</kbd>. Film trafi do zakładki Queue.',
@@ -1042,7 +1059,14 @@ const T = {
     's9.p.advanced': 'W sekcji <strong>Zaawansowane</strong> znajdziesz przycisk <strong>Zainstaluj CLI</strong> (pakiet npm <code>wavesconv</code>), krótki tutorial terminala oraz opis deep linków <code>wavesconverter://</code>.',
     'sdeeplink.title': 'Deep linking',
     'sdeeplink.intro': 'Po instalacji aplikacji desktopowej system rejestruje niestandardowy protokół <code>wavesconverter://</code>. Linki w tym formacie otwierają WavesConverter i przekazują akcję oraz opcjonalnie URL filmu (YouTube lub Instagram).',
-    'sdeeplink.h.how': 'Jak to działa',
+    'sdeeplink.h.prefix': 'Skrót: prefiks przed linkiem',
+    'sdeeplink.p.prefix': 'Nie musisz budować pełnego deep linka z parametrami — możesz po prostu <strong>dopisać</strong> <code>wavesconverter://</code> przed zwykłym adresem YouTube lub Instagram. Aplikacja (i CLI) sama rozpoznają link i zamieniają go na czysty <code>https://…</code>.',
+    'sdeeplink.code.prefix': 'Wklejanie w aplikacji / schowku',
+    'sdeeplink.p.prefix.where': 'Działa w: polu URL (zakładka Pobierz), auto-wykrywaniu schowka (skrót globalny), wklejaniu ⌘V/Ctrl+V oraz w terminalu (<code>wavesconv</code>, tryb interaktywny i <code>wavesconv download …</code>). Po rozpoznaniu w polu zostaje już tylko zwykły link HTTPS.',
+    'sdeeplink.h.how': 'Jak to działa (pełne deep linki)',
+    'sdeeplink.row.prefix': 'Prefiks przed zwykłym linkiem — wyszukaj / otwórz (bez kodowania URL)',
+    'sdeeplink.row.prefixshort': 'Ten sam skrót bez <code>https://</code>',
+    'sdeeplink.code.prefixyt': 'YouTube — prefiks (najprostsze)',
     'sdeeplink.step1': 'Użytkownik klika link <code>wavesconverter://…</code> w przeglądarce, skrypcie lub innym programie.',
     'sdeeplink.step2': 'System uruchamia (lub aktywuje) WavesConverter i przekazuje pełny URL protokołu.',
     'sdeeplink.step3': 'Aplikacja parsuje akcję (<code>download</code>, <code>queue</code>, <code>open</code>) i parametry — głównie <code>url</code> (zakodowany w UTF-8).',
@@ -1064,7 +1088,7 @@ const T = {
     'scli.code.install': 'npm — globalnie',
     'scli.p.install': 'Przy pierwszym użyciu uruchom <code>wavesconv tools install</code>, aby pobrać yt-dlp. Do konwersji plików potrzebny jest też <code>ffmpeg</code> w PATH (lub zainstaluj go z poziomu aplikacji desktop).',
     'scli.h.interactive': 'Tryb interaktywny (wklej linki)',
-    'scli.p.interactive': 'Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube lub Instagram i naciśnij Enter — pobieranie startuje automatycznie.',
+    'scli.p.interactive': 'Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube lub Instagram (opcjonalnie z prefiksem <code>wavesconverter://</code>) i naciśnij Enter — pobieranie startuje automatycznie.',
     'scli.code.interactive': 'Terminal',
     'scli.h.commands': 'Polecenia jednorazowe',
     'scli.code.download': 'Pobieranie',
@@ -1125,7 +1149,7 @@ const T = {
     's1.win.note': 'WavesConverter is safe and open source, but it is not yet signed with a paid Microsoft certificate. This is normal for new indie software. The source code is publicly available on GitHub.',
     's2.title': 'Downloading Videos',
     's2.intro': 'To download a single <strong>YouTube</strong> video (or public Instagram content — see <a href="#instagram">Instagram</a>), follow these steps:',
-    's2.step1': '<strong>Paste the URL</strong> — copy a video link (youtube.com/watch, youtu.be, or Shorts) and press <kbd class="kbd">⌘V</kbd> (macOS) or <kbd class="kbd">Ctrl+V</kbd> (Windows). The link will auto-fill and metadata fetching will begin.',
+    's2.step1': '<strong>Paste the URL</strong> — copy a video link (youtube.com/watch, youtu.be, or Shorts) and press <kbd class="kbd">⌘V</kbd> (macOS) or <kbd class="kbd">Ctrl+V</kbd> (Windows). You can also prepend <code>wavesconverter://</code> (<a href="#deeplink">details</a>). The link will auto-fill and metadata fetching will begin.',
     's2.step2': '<strong>Click Fetch</strong> — the app will retrieve the title, thumbnail, and available formats from YouTube.',
     's2.step3': '<strong>Choose format & quality</strong> — toggle between Video / Audio, pick a format (MP4, MKV, MOV, WebM for video; MP3, WAV, FLAC, M4A for audio) and resolution or bitrate.',
     's2.step4': '<strong>Add to Queue</strong> — click <strong>Add to Queue</strong> or press <kbd class="kbd">⌘D</kbd>. The video will appear in the Queue tab.',
@@ -1223,7 +1247,14 @@ const T = {
     's9.p.advanced': 'Under <strong>Advanced</strong> you will find <strong>Install CLI</strong> (npm package <code>wavesconv</code>), a quick terminal tutorial, and deep link docs for <code>wavesconverter://</code>.',
     'sdeeplink.title': 'Deep linking',
     'sdeeplink.intro': 'After installing the desktop app, the OS registers the custom protocol <code>wavesconverter://</code>. Links in this format open WavesConverter and pass an action plus an optional media URL (YouTube or Instagram).',
-    'sdeeplink.h.how': 'How it works',
+    'sdeeplink.h.prefix': 'Shortcut: prefix before the URL',
+    'sdeeplink.p.prefix': 'You do not need a full deep link with query parameters — simply <strong>prepend</strong> <code>wavesconverter://</code> to a normal YouTube or Instagram URL. The app (and CLI) detect it and normalize it to plain <code>https://…</code>.',
+    'sdeeplink.code.prefix': 'Paste in the app / clipboard',
+    'sdeeplink.p.prefix.where': 'Works in: the URL field (Download tab), clipboard auto-detect (global shortcut), ⌘V/Ctrl+V paste, and the terminal (<code>wavesconv</code>, interactive mode, and <code>wavesconv download …</code>). After parsing, only the plain HTTPS URL remains in the field.',
+    'sdeeplink.h.how': 'How it works (full deep links)',
+    'sdeeplink.row.prefix': 'Prefix before a normal link — fetch / open (no URL encoding)',
+    'sdeeplink.row.prefixshort': 'Same shortcut without <code>https://</code>',
+    'sdeeplink.code.prefixyt': 'YouTube — prefix (simplest)',
     'sdeeplink.step1': 'The user clicks a <code>wavesconverter://…</code> link in a browser, script, or another app.',
     'sdeeplink.step2': 'The OS launches (or focuses) WavesConverter and passes the full protocol URL.',
     'sdeeplink.step3': 'The app parses the action (<code>download</code>, <code>queue</code>, <code>open</code>) and parameters — mainly <code>url</code> (UTF-8 encoded).',
@@ -1245,7 +1276,7 @@ const T = {
     'scli.code.install': 'npm — global',
     'scli.p.install': 'On first use run <code>wavesconv tools install</code> to download yt-dlp. File conversion also needs <code>ffmpeg</code> on your PATH (or install tools via the desktop app).',
     'scli.h.interactive': 'Interactive mode (paste links)',
-    'scli.p.interactive': 'Run <code>wavesconv</code> with no arguments — a colourful prompt appears. Paste a YouTube or Instagram link and press Enter — the download starts automatically.',
+    'scli.p.interactive': 'Run <code>wavesconv</code> with no arguments — a colourful prompt appears. Paste a YouTube or Instagram link (optionally with a <code>wavesconverter://</code> prefix) and press Enter — the download starts automatically.',
     'scli.code.interactive': 'Terminal',
     'scli.h.commands': 'One-shot commands',
     'scli.code.download': 'Download',

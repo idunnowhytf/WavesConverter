@@ -68,6 +68,7 @@ function cmdToolsStatus(color) {
 }
 
 async function cmdInfo(url, flags, color) {
+  url = resolveCliMediaUrl(url);
   const spin = new ui.Spinner('Pobieranie metadanych', color);
   spin.start();
   let items;
@@ -100,10 +101,16 @@ async function cmdInfo(url, flags, color) {
   console.log('');
 }
 
-async function cmdDownload(url, flags, color) {
-  if (!engine.isSupportedMediaUrl(url)) {
-    throw new Error('Nieobsługiwany URL. Użyj linku YouTube lub Instagram (post / Reel / Stories).');
+function resolveCliMediaUrl(raw) {
+  const { mediaUrl } = engine.resolveInputUrl(raw);
+  if (!mediaUrl) {
+    throw new Error('Nieobsługiwany URL. Wklej YouTube/Instagram lub wavesconverter:// przed linkiem.');
   }
+  return mediaUrl;
+}
+
+async function cmdDownload(url, flags, color) {
+  url = resolveCliMediaUrl(url);
 
   const setupSpin = new ui.Spinner('Przygotowanie yt-dlp', color);
   setupSpin.start();
@@ -257,7 +264,7 @@ async function run(argv) {
     switch (cmd) {
       case 'download': {
         const url = positional[1];
-        if (!url) throw new Error('Podaj URL: wavesconv download <url>');
+        if (!url) throw new Error('Podaj URL: wavesconv download <url> (możesz dodać wavesconverter:// przed linkiem)');
         await cmdDownload(url, flags, color);
         return 0;
       }
@@ -296,7 +303,8 @@ function shouldRunAsCli(argv) {
   return ['download', 'info', 'convert', 'tools', 'help'].includes(first);
 }
 
-if (require.main === module) {
+// Gdy Electron ładuje ten plik przez pomyłkę (zły "main" w package.json), nie uruchamiaj CLI.
+if (require.main === module && !process.versions.electron) {
   run(process.argv.slice(2)).then(code => process.exit(code));
 }
 

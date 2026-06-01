@@ -39,7 +39,7 @@
   <div class="glass-card url-card">
     <div class="url-input-wrap">
       <div class="url-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
-      <input type="text" id="urlInput" class="url-input" placeholder="YouTube, Instagram (post, Reel, Stories)…" autocomplete="off" spellcheck="false"/>
+      <input type="text" id="urlInput" class="url-input" placeholder="YouTube, Instagram… lub wavesconverter:// przed linkiem" autocomplete="off" spellcheck="false"/>
       <button class="btn-fetch" id="btnFetch">
         <span class="btn-fetch-text">Wyszukaj</span>
         <span class="btn-fetch-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
@@ -239,6 +239,7 @@
     <h3 class="settings-subhead">🔗 Deep linking</h3>
     <p class="sys-hint">Po instalacji aplikacji system rejestruje protokół <code>wavesconverter://</code>. Linki otwierają WavesConverter z wklejonym adresem (YouTube lub Instagram).</p>
     <div class="shortcuts-grid deeplink-examples">
+      <div class="shortcut-row"><kbd>wavesconverter://https://youtu.be/…</kbd><span>Skrót: prefiks przed zwykłym linkiem (pole URL / schowek)</span></div>
       <div class="shortcut-row"><kbd>wavesconverter://download?url=…</kbd><span>Wyszukaj w zakładce Pobierz</span></div>
       <div class="shortcut-row"><kbd>wavesconverter://queue?url=…&amp;start=1</kbd><span>Dodaj do kolejki i startuj pobieranie</span></div>
       <div class="shortcut-row"><kbd>wavesconverter://download?url=…&amp;type=audio</kbd><span>Wymuś tryb audio (np. MP3)</span></div>

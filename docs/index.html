@@ -823,7 +823,7 @@
   </div>
     <div class="fgrid" id="fgrid">
     <div class="fcard reveal"><div class="ficon">📸</div><h3>Instagram</h3><p>Reels, posty, IGTV i Stories (z plikiem cookies). Ten sam przepływ co YouTube — wklej link i pobierz.</p></div>
-    <div class="fcard reveal reveal-delay-1"><div class="ficon">🔗</div><h3>Deep linking</h3><p>Protokół <code>wavesconverter://</code> otwiera aplikację z linkiem YouTube lub Instagram — idealne do skryptów i skrótów.</p></div>
+    <div class="fcard reveal reveal-delay-1"><div class="ficon">🔗</div><h3>Deep linking</h3><p>Protokół <code>wavesconverter://</code> — pełne deep linki ze skryptów lub prosty prefiks przed zwykłym URL (<code>wavesconverter://https://youtu.be/…</code>) w polu i schowku.</p></div>
     <div class="fcard reveal reveal-delay-2"><div class="ficon">📋</div><h3>Obsługa playlist</h3><p>Pobieraj całe playlisty lub wybieraj poszczególne filmy. Ustaw globalne ustawienia lub nadpisuj format i jakość dla każdego filmu osobno.</p></div>
     <div class="fcard reveal reveal-delay-1"><div class="ficon">⚡</div><h3>Równoległa kolejka</h3><p>Dodaj wiele pobrań do kolejki i uruchom je jednocześnie. Pauzuj, wznawiaj lub ponawiaj nieudane — pełna kontrola jednym kliknięciem.</p></div>
     <div class="fcard reveal reveal-delay-2"><div class="ficon">🎛️</div><h3>Pełna kontrola jakości</h3><p>Wybieraj rozdzielczość od 360p do 4K i audio od 96 do 320 kbps. Ustawiaj globalnie lub osobno dla każdego filmu.</p></div>
@@ -1083,6 +1083,8 @@ const TRANSLATIONS = {
     'mob.download.docs': 'Dokumentacja',
     'mob.download.changelog': 'Changelog',
     'fcard': [
+      ['📸','Instagram','Reels, posty, IGTV i Stories (z plikiem cookies). Ten sam przepływ co YouTube — wklej link i pobierz.'],
+      ['🔗','Deep linking','Protokół <code>wavesconverter://</code> — pełne deep linki lub prefiks przed URL (<code>wavesconverter://https://youtu.be/…</code>) w aplikacji i CLI.'],
       ['📋','Obsługa playlist','Pobieraj całe playlisty lub wybieraj poszczególne filmy. Ustaw globalne ustawienia lub nadpisuj format i jakość dla każdego filmu osobno.'],
       ['⚡','Równoległa kolejka','Dodaj wiele pobrań do kolejki i uruchom je jednocześnie. Pauzuj, wznawiaj lub ponawiaj nieudane — pełna kontrola jednym kliknięciem.'],
       ['🎛️','Pełna kontrola jakości','Wybieraj rozdzielczość od 360p do 4K i audio od 96 do 320 kbps. Ustawiaj globalnie lub osobno dla każdego filmu.'],
@@ -1145,6 +1147,8 @@ const TRANSLATIONS = {
     'mob.download.docs': 'Documentation',
     'mob.download.changelog': 'Changelog',
     'fcard': [
+      ['📸','Instagram','Reels, posts, IGTV, and Stories (with a cookies file). Same flow as YouTube — paste a link and download.'],
+      ['🔗','Deep linking','<code>wavesconverter://</code> protocol — full deep links from scripts or a simple prefix before any URL in the app and CLI.'],
       ['📋','Playlist Support','Download entire playlists or cherry-pick individual videos. Set global settings or override per-item format and quality.'],
       ['⚡','Concurrent Queue','Queue multiple downloads and run them simultaneously. Pause, resume, or retry failed items with a single click.'],
       ['🎛️','Full Quality Control','Choose from 360p to 4K and audio from 96 to 320 kbps. Apply globally or override per video — your call.'],
@@ -1176,7 +1180,7 @@ function applyLang(lang) {
   // features grid
   const fg = document.getElementById('fgrid');
   if(fg) {
-    const delays = ['','reveal-delay-1','reveal-delay-2','','reveal-delay-1','reveal-delay-2','','reveal-delay-1','reveal-delay-2'];
+    const delays = ['','reveal-delay-1','reveal-delay-2','','reveal-delay-1','reveal-delay-2','','reveal-delay-1','reveal-delay-2','','reveal-delay-1','reveal-delay-2'];
     fg.innerHTML = t['fcard'].map((c,i)=>`<div class="fcard reveal visible ${delays[i]}"><div class="ficon">${c[0]}</div><h3>${c[1]}</h3><p>${c[2]}</p></div>`).join('');
   }
   // how head

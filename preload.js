@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('api', {
   checkYtdlp: () => ipcRenderer.invoke('check-ytdlp'),
   checkFfmpeg: () => ipcRenderer.invoke('check-ffmpeg'),
   fetchInfo: (url, options) => ipcRenderer.invoke('fetch-info', url, options),
+  resolveInputUrl: (text) => ipcRenderer.invoke('resolve-input-url', text),
   isSupportedUrl: (url) => ipcRenderer.invoke('is-supported-url', url),
   getUrlPlatform: (url) => ipcRenderer.invoke('get-url-platform', url),
   chooseCookiesFile: () => ipcRenderer.invoke('choose-cookies-file'),

@@ -1,8 +1,8 @@
 {
   "name": "wavesconv",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "CLI: pobieranie YouTube (yt-dlp) i konwersja mediów (ffmpeg) — WavesConverter",
-  "main": "cli.js",
+  "main": "main.js",
   "bin": {
     "wavesconv": "./cli.js"
   },
@@ -16,11 +16,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/idunnowhytf/wavesconvsite.git"
+    "url": "git+https://github.com/idunnowhytf/WavesConverter.git"
   },
-  "homepage": "https://github.com/idunnowhytf/wavesconvsite#readme",
+  "homepage": "https://github.com/idunnowhytf/WavesConverter#readme",
   "bugs": {
-    "url": "https://github.com/idunnowhytf/wavesconvsite/issues"
+    "url": "https://github.com/idunnowhytf/WavesConverter/issues"
   },
   "keywords": [
     "youtube",
@@ -34,6 +34,7 @@
   "author": "WavesConverter",
   "scripts": {
     "start": "electron .",
+    "start:cli": "node cli.js",
     "cli": "node cli.js",
     "prepublishOnly": "node cli.js --version",
     "build": "electron-builder",
@@ -98,12 +99,12 @@
   "license": "ISC",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "electron-updater": "^6.8.3",
+    "qrcode": "^1.5.4",
     "yt-dlp-wrap": "^2.3.12"
   },
   "devDependencies": {
     "electron": "^42.3.0",
-    "electron-builder": "^26.8.1",
-    "electron-updater": "^6.8.3",
-    "qrcode": "^1.5.4"
+    "electron-builder": "^26.8.1"
   }
 }

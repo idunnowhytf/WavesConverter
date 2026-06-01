@@ -4,6 +4,11 @@ let settings={ outputDir:'', concurrent:2, videoFormat:'mp4', audioFormat:'mp3',
 let currentFetchUrl='', currentFetchPlatform=null;
 let downloadHistory=[];
 
+async function normalizeUrlInput(raw) {
+  const r = await window.api.resolveInputUrl((raw || '').trim());
+  return r?.mediaUrl || null;
+}
+
 window.addEventListener('DOMContentLoaded', async () => {
   settings.outputDir = await window.api.getDefaultDir();
   loadSettings();
@@ -23,18 +28,17 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (window.api.onClipboardSearchTrigger) {
     window.api.onClipboardSearchTrigger(async (text) => {
       if (!text) return;
-      const cleanText = text.trim();
-      if (await window.api.isSupportedUrl(cleanText)) {
-        const urlInput = document.getElementById('urlInput');
-        if (urlInput) {
-          if (urlInput.value.trim() === cleanText) return;
-          urlInput.value = cleanText;
-          switchTab('download');
-          const btnFetch = document.getElementById('btnFetch');
-          if (btnFetch) btnFetch.click();
-          const plat = await window.api.getUrlPlatform(cleanText);
-          toast(plat === 'instagram' ? 'Wykryto link Instagram — wyszukiwanie... 📸' : 'Wykryto link YouTube — wyszukiwanie... 🔍', 'info');
-        }
+      const mediaUrl = await normalizeUrlInput(text);
+      if (!mediaUrl) return;
+      const urlInput = document.getElementById('urlInput');
+      if (urlInput) {
+        if (urlInput.value.trim() === mediaUrl) return;
+        urlInput.value = mediaUrl;
+        switchTab('download');
+        const btnFetch = document.getElementById('btnFetch');
+        if (btnFetch) btnFetch.click();
+        const plat = await window.api.getUrlPlatform(mediaUrl);
+        toast(plat === 'instagram' ? 'Wykryto link Instagram — wyszukiwanie... 📸' : 'Wykryto link YouTube — wyszukiwanie... 🔍', 'info');
       }
     });
   }
@@ -156,14 +160,13 @@ function initKeyboardShortcuts() {
           inp.focus();
           // Read clipboard and paste
           navigator.clipboard.readText().then(text => {
-            if (text) {
-              window.api.isSupportedUrl(text).then(ok => {
-                if (!ok) return;
-                inp.value = text;
-                setTimeout(() => doFetch(), 100);
-                toast('Wklejono link — wyszukiwanie…', 'info');
-              });
-            }
+            if (!text) return;
+            normalizeUrlInput(text).then(mediaUrl => {
+              if (!mediaUrl) return;
+              inp.value = mediaUrl;
+              setTimeout(() => doFetch(), 100);
+              toast('Wklejono link — wyszukiwanie…', 'info');
+            });
           }).catch(()=>{});
         }
         break;
@@ -295,11 +298,13 @@ function fillFormatSelect(selId,type) {
 function toggle(id,show) { const el=document.getElementById(id); show?el.classList.remove('hidden'):el.classList.add('hidden'); }
 
 async function doFetch() {
-  const url = document.getElementById('urlInput').value.trim();
-  if(!url) return toast('Najpierw wprowadź URL','warning');
-  if(!(await window.api.isSupportedUrl(url))) {
-    return toast('Nieobsługiwany link. Wklej URL YouTube lub Instagram (post, Reel, Stories).','warning');
+  const raw = document.getElementById('urlInput').value.trim();
+  if(!raw) return toast('Najpierw wprowadź URL','warning');
+  const url = await normalizeUrlInput(raw);
+  if(!url) {
+    return toast('Nieobsługiwany link. Wklej URL YouTube/Instagram lub wavesconverter:// przed linkiem.','warning');
   }
+  if (url !== raw) document.getElementById('urlInput').value = url;
   currentFetchUrl=url;
   currentFetchPlatform=await window.api.getUrlPlatform(url);
   if(currentFetchPlatform==='instagram'&&url.toLowerCase().includes('/stories/')) {

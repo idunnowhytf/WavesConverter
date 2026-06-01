@@ -21,7 +21,16 @@ if (cliFlagIdx !== -1) {
 
 function startElectronApp() {
 const { app, BrowserWindow, ipcMain, dialog, shell, Menu, Tray, globalShortcut, clipboard } = require('electron');
-const QRCode = require('qrcode');
+const isDev = !app.isPackaged;
+
+function loadQRCode() {
+  try {
+    return require('qrcode');
+  } catch (e) {
+    console.error('qrcode module missing:', e.message);
+    return null;
+  }
+}
 
 let mainWindow;
 let ytDlpPath;
@@ -204,22 +213,39 @@ function cleanupExtractedFolders(dir) {
 }
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
+  const isWin = process.platform === 'win32';
+  // On Windows, transparent + vibrancy-like effects are a common cause of "app runs but window is invisible".
+  // Keep the premium glass look for macOS, but force a safe, opaque window on Windows.
+  const windowOpts = {
     width: 1300, height: 860, minWidth: 920, minHeight: 660,
-    frame: false, transparent: true, backgroundColor: '#00000000',
-    vibrancy: 'under-window', visualEffectState: 'active',
+    frame: false,
+    transparent: !isWin,
+    backgroundColor: isWin ? '#0a0118' : '#00000000',
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false },
-    title: 'WavesConverter', show: false,
-  });
+    title: 'WavesConverter',
+    show: false,
+  };
+  if (!isWin) {
+    windowOpts.vibrancy = 'under-window';
+    windowOpts.visualEffectState = 'active';
+  }
+
+  mainWindow = new BrowserWindow(windowOpts);
   mainWindow.loadFile('index.html');
   mainWindow.once('ready-to-show', () => mainWindow.show());
+  // Fallback: if ready-to-show never fires, still show the window.
+  setTimeout(() => {
+    try {
+      if (mainWindow && !mainWindow.isVisible()) mainWindow.show();
+    } catch (_) {}
+  }, 2500);
   mainWindow.webContents.on('did-finish-load', flushPendingDeepLink);
   mainWindow.on('maximize',   () => mainWindow.webContents.send('window-state', 'maximized'));
   mainWindow.on('unmaximize', () => mainWindow.webContents.send('window-state', 'normal'));
   
   // Close to tray logic
   mainWindow.on('close', (event) => {
-    if (!isQuitting) {
+    if (!isQuitting && !isDev) {
       event.preventDefault();
       mainWindow.hide();
       return false;
@@ -305,8 +331,19 @@ if (!gotSingleInstanceLock) {
       } catch (e) { console.error('yt-dlp download failed on startup:', e.message); }
     }
     createWindow();
-    createTray();
-    registerGlobalShortcut();
+    if (!isDev) {
+      createTray();
+      registerGlobalShortcut();
+    }
+    // In dev mode, always force focus/visibility to avoid "running but no window" confusion.
+    if (isDev) {
+      setTimeout(() => {
+        try {
+          mainWindow?.show();
+          mainWindow?.focus();
+        } catch (_) {}
+      }, 800);
+    }
     setupAutoUpdater();
   });
 
@@ -411,8 +448,12 @@ ipcMain.handle('install-tools', async (event) => {
 });
 
 ipcMain.handle('fetch-info', async (_, url, options) => engine.fetchInfo(url, options || {}));
-ipcMain.handle('is-supported-url', (_, url) => engine.isSupportedMediaUrl(url));
-ipcMain.handle('get-url-platform', (_, url) => engine.getMediaPlatform(url));
+ipcMain.handle('resolve-input-url', (_, text) => engine.resolveInputUrl(text));
+ipcMain.handle('is-supported-url', (_, url) => !!engine.resolveInputUrl(url).mediaUrl);
+ipcMain.handle('get-url-platform', (_, url) => {
+  const media = engine.resolveInputUrl(url).mediaUrl;
+  return media ? engine.getMediaPlatform(media) : null;
+});
 ipcMain.handle('choose-cookies-file', async () => {
   const r = await dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],
@@ -524,13 +565,17 @@ ipcMain.handle('start-share-server', async (event, { filePath, fileName }) => {
       const port = shareServer.address().port;
       const shareUrl = `http://${localIp}:${port}/download`;
       try {
-        const qrDataUrl = await QRCode.toDataURL(shareUrl, {
-          color: {
-            dark: '#1e0b36',
-            light: '#f0e6ff'
-          },
-          margin: 2
-        });
+        const QRCode = loadQRCode();
+        let qrDataUrl = null;
+        if (QRCode) {
+          qrDataUrl = await QRCode.toDataURL(shareUrl, {
+            color: {
+              dark: '#1e0b36',
+              light: '#f0e6ff'
+            },
+            margin: 2
+          });
+        }
         resolve({ shareUrl, qrDataUrl });
       } catch (err) {
         reject(err);
